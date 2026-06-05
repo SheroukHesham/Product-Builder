@@ -1,14 +1,20 @@
-import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
+import {
+  Dialog,
+  DialogBackdrop,
+  DialogPanel,
+  DialogTitle,
+} from "@headlessui/react";
 import { type ReactNode } from "react";
 
 interface IProps {
   title?: string;
   isOpen: boolean;
+  description?: string;
   close: () => void;
   children: ReactNode;
 }
 
-const Modal = ({ title, isOpen, close, children }: IProps) => {
+const Modal = ({ title, isOpen, close, children, description }: IProps) => {
   return (
     <>
       <Dialog
@@ -18,6 +24,7 @@ const Modal = ({ title, isOpen, close, children }: IProps) => {
         onClose={close}
         __demoMode
       >
+        <DialogBackdrop className="fixed backdrop-blur-sm inset-0 bg-black bg-opacity-25" />
         <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4">
             <DialogPanel
@@ -31,6 +38,10 @@ const Modal = ({ title, isOpen, close, children }: IProps) => {
                 >
                   {title}
                 </DialogTitle>
+              )}
+
+              {description && (
+                <p className="text-gray-500 text-sm mt-3">{description}</p>
               )}
 
               <div className="mt-4">{children}</div>

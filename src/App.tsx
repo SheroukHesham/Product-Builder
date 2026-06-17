@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent, type SubmitEvent } from "react";
+import { useCallback, useRef, useState, type SubmitEvent } from "react";
 import { v4 as uuid } from "uuid";
 import ProductCard from "./components/ProductCard";
 import { categories, colors, formInputsList, productList } from "./data";
@@ -26,6 +26,8 @@ function App() {
   };
 
   //** ---- STATES ---- **//
+
+  const inputRef = useRef<null | HTMLInputElement>(null);
   //** products render states */
   const [productListRender, setProductListRender] = useState(productList);
 
@@ -58,16 +60,16 @@ function App() {
     setIsOpen(false);
   };
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setProduct({
-      ...product,
-      [name]: value,
-    });
+  // const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+  //   const { name, value } = e.target;
+  //   setProduct((prev) => ({
+  //     ...prev,
+  //     [name]: value,
+  //   }));
 
-    //**TODO: error disappears only when validation is passed
-    setErrors({ ...errors, [name]: "" });
-  };
+  //   //**TODO: error disappears only when validation is passed
+  //   setErrors((prev) => ({ ...prev, [name]: "" }));
+  // };
 
   const onCancel = () => {
     setProduct(defaultProduct);
@@ -111,24 +113,24 @@ function App() {
   };
 
   //** Edit Modal */
-  const openEditModal = () => {
+  const openEditModal = useCallback(() => {
     setIsEditOpen(true);
-  };
+  }, []);
 
   const closeEditModal = () => {
     setIsEditOpen(false);
   };
 
-  const onEditChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setProductToEdit({
-      ...productToEdit,
-      [name]: value,
-    });
+  // const onEditChange = (e: ChangeEvent<HTMLInputElement>) => {
+  //   const { name, value } = e.target;
+  //   setProductToEdit({
+  //     ...productToEdit,
+  //     [name]: value,
+  //   });
 
-    //**TODO: error disappears only when validation is passed
-    setErrors({ ...errors, [name]: "" });
-  };
+  //**TODO: error disappears only when validation is passed
+  //   setErrors({ ...errors, [name]: "" });
+  // };
 
   const onEditCancel = () => {
     setProductToEdit(defaultProduct);
@@ -168,9 +170,9 @@ function App() {
   };
 
   // ** Remove Modal ** //
-  const openRemoveModal = () => {
+  const openRemoveModal = useCallback(() => {
     setIsRemoveOpen(true);
-  };
+  }, []);
 
   const closeRemoveModal = () => {
     setIsRemoveOpen(false);
@@ -220,13 +222,7 @@ function App() {
       >
         {input.label}
       </label>
-      <Input
-        type={input.type}
-        id={input.id}
-        name={input.name}
-        value={productToEdit[input.name]}
-        onChange={onEditChange}
-      />
+      <Input type={input.type} id={input.id} name={input.name} ref={inputRef} />
       <Error msg={errors[input.name]} />
     </div>
   ));
@@ -240,13 +236,7 @@ function App() {
       >
         {input.label}
       </label>
-      <Input
-        type={input.type}
-        id={input.id}
-        name={input.name}
-        value={product[input.name]}
-        onChange={onChange}
-      />
+      <Input type={input.type} id={input.id} name={input.name} ref={inputRef} />
       <Error msg={errors[input.name]} />
     </div>
   ));
@@ -273,12 +263,15 @@ function App() {
 
   return (
     <main className="container mx-auto ">
-      <Button
-        className="bg-blue-700 hover:bg-blue-800"
-        onClick={() => openModal()}
-      >
-        Add Product
-      </Button>
+      <div className="flex justify-center mt-5">
+        <Button
+          width="w-fit"
+          className="bg-blue-700 hover:bg-blue-800"
+          onClick={() => openModal()}
+        >
+          Add Product
+        </Button>
+      </div>
       <div className="grid my-3 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mx-12 md:gap-5">
         {renderProductList}
       </div>

@@ -1,4 +1,10 @@
-import { useCallback, useRef, useState, type SubmitEvent } from "react";
+import {
+  useCallback,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type SubmitEvent,
+} from "react";
 import { v4 as uuid } from "uuid";
 import ProductCard from "./components/ProductCard";
 import { categories, colors, formInputsList, productList } from "./data";
@@ -76,6 +82,8 @@ function App() {
     closeModal();
   };
 
+  console.log(productToEdit);
+
   const submitHandler = (event: SubmitEvent<HTMLFormElement>): void => {
     event.preventDefault();
     const { title, description, imageURL, price } = product;
@@ -121,16 +129,16 @@ function App() {
     setIsEditOpen(false);
   };
 
-  // const onEditChange = (e: ChangeEvent<HTMLInputElement>) => {
-  //   const { name, value } = e.target;
-  //   setProductToEdit({
-  //     ...productToEdit,
-  //     [name]: value,
-  //   });
+  const onEditChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setProductToEdit({
+      ...productToEdit,
+      [name]: value,
+    });
 
-  //**TODO: error disappears only when validation is passed
-  //   setErrors({ ...errors, [name]: "" });
-  // };
+    //**TODO: error disappears only when validation is passed
+    setErrors({ ...errors, [name]: "" });
+  };
 
   const onEditCancel = () => {
     setProductToEdit(defaultProduct);
@@ -222,7 +230,13 @@ function App() {
       >
         {input.label}
       </label>
-      <Input type={input.type} id={input.id} name={input.name} ref={inputRef} />
+      <Input
+        type={input.type}
+        id={input.id}
+        name={input.name}
+        onChange={onEditChange}
+        value={productToEdit[input.name]}
+      />
       <Error msg={errors[input.name]} />
     </div>
   ));
